@@ -1,63 +1,51 @@
+using ll=long long int;
 class Solution {
 public:
-    int mod=1e9+7;
     int dp[201][201][201][2];
-    int fun(int ones,int zeros,int l,int prev,int n,int one,int zero,int limit,int dp[201][201][201][2])
+    ll mod=1e9+7;
+    int f(int one,int zero,int o,int z,int pre,int cnt,int limit)
     {
-        if(ones+zeros==n)
-        {
+        if(one==o&&zero==z)
             return 1;
-        }
-        if(dp[ones][zeros][l][prev]!=-1)
+        if(dp[one][zero][cnt][pre]!=-1)
+            return dp[one][zero][cnt][pre];
+        int tk=0;
+        if(one<o)
         {
-            return dp[ones][zeros][l][prev];
+            if(pre==1)
+            {
+                if(cnt+1<=limit)
+                tk=((tk%mod)+f(one+1,zero,o,z,1,cnt+1,limit)%mod)%mod;
+            }
+            else 
+                tk=((tk%mod)+f(one+1,zero,o,z,1,1,limit)%mod)%mod;
         }
-        int ans=0;
-        if(l==limit)
-        {
-            if(prev==1)
-            {
-                if(zeros<zero)
-                {
-                    ans=(ans+fun(ones,zeros+1,1,0,n,one,zero,limit,dp)%mod)%mod;
-                }
-            }
-            if(prev==0)
-            {
-                if(ones<one)
-                {
-                    ans=(ans+fun(ones+1,zeros,1,1,n,one,zero,limit,dp)%mod)%mod;
-                }
-            }
-        }
-        else
-        {
-            if(zeros<zero)
-            {
-                if(prev==0)
-                {
-                    ans=(ans+fun(ones,zeros+1,l+1,0,n,one,zero,limit,dp)%mod)%mod;
-                }
-                else
-                ans=(ans+fun(ones,zeros+1,1,0,n,one,zero,limit,dp)%mod)%mod;
-            }
-            if(ones<one)
-            {
-                if(prev==1)
-                {
-                    ans=(ans+fun(ones+1,zeros,l+1,1,n,one,zero,limit,dp)%mod)%mod;
-                }
-                else
-                ans=(ans+fun(ones+1,zeros,1,1,n,one,zero,limit,dp)%mod)%mod;
-            }
-        }
-        return dp[ones][zeros][l][prev]=ans;
+       if(zero<z)
+       {
+           if(pre==0)
+           {
+               if(cnt+1<=limit)
+                   tk=((tk%mod)+f(one,zero+1,o,z,0,cnt+1,limit)%mod)%mod;
+           }
+           else if(pre==1)
+               tk=((tk%mod)+f(one,zero+1,o,z,0,1,limit)%mod)%mod;
+       }
+        return dp[one][zero][cnt][pre]=tk%mod;
     }
     int numberOfStableArrays(int zero, int one, int limit) {
-        int n=zero+one;
-        memset(dp,-1,sizeof(dp));
-        int ans= fun(0,0,0,0,n,one,zero,limit,dp);
-        return ans;
-        
+       
+        // memset(dp,-1,sizeof(dp));
+        for(int i=0; i<=one; i++){
+            for(int j=0; j<=zero; j++){
+                for(int k=0; k<=limit; k++){
+                    for(int l=0; l<2; l++){
+                        dp[i][j][k][l]=-1;
+                    }
+                    
+                }
+            }
+        }
+        int ans=f(0,0,one,zero,0,0,limit);
+        return ans%mod;
     }
 };
