@@ -1,23 +1,32 @@
 class Solution {
 public:
     int n;
-    int fun(int index,int prev,vector<int> &nums,vector<vector<int>> &dp)
+    int fun(int index,int prev,vector<int> &nums,vector<int> &temp)
     {
-        if(index==nums.size())
-        return 0;
-        if(dp[index][prev]!=-1)
-        return dp[index][prev];
-        int tk=0,nt=0;
-        if(prev==n||nums[index]>nums[prev])
+        int ans=0;
+        for(int i=0;i<n;i++)
         {
-            tk=max(tk,1+fun(index+1,index,nums,dp));
+            if(temp.size()==0)
+            {
+                temp.push_back(nums[i]);
+            }
+            else
+            if(nums[i]>temp.back())
+            {
+                temp.push_back(nums[i]);
+            }
+            else
+            {
+                int index=lower_bound(temp.begin(),temp.end(),nums[i])-temp.begin();
+                temp[index]=nums[i];
+            }
         }
-        nt=max(nt,fun(index+1,prev,nums,dp));
-        return dp[index][prev]=max(tk,nt);
+        return temp.size();
     }
     int lengthOfLIS(vector<int>& nums) {
         n=nums.size();
-        vector<vector<int>> dp(n,vector<int>(n+1,-1));
-        return fun(0,n,nums,dp);
+        // vector<vector<int>> dp(n,vector<int>(n+1,-1));
+        vector<int> temp;
+        return fun(0,n,nums,temp);
     }
 };
